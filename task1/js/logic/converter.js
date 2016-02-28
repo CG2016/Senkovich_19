@@ -44,93 +44,151 @@ function hslToRgb(h, s, l) {
     return [r * 255, g * 255, b * 255];
 }
 
-function rgbToLuv(R, G, B) {
-    r = R/255, g = G/255, b = B/255;
+function fromRGBtoXYZ(rgb) {
+    var varR = rgb[0] / 255;
+    var varG = rgb[1] / 255;
+    var varB = rgb[2] / 255;
 
-    if (r > 0.04045)
-        r = Math.pow(((r + 0.055) / 1.055), 2.4);
-    else
-        r = r / 12.92;
-    if (g > 0.04045)
-        g = Math.pow(((g + 0.055) / 1.055), 2.4);
-    else
-        g = g / 12.92;
-    if (b > 0.04045)
-        b = Math.pow(((b + 0.055) / 1.055), 2.4);
-    else
-        b = b / 12.92;
+    if(varR <= 0.4045) {
+        varR /= 12.92;
+    }
+    else {
+        varR = Math.pow((varR + 0.055) / 1.055, 2.4);
+    }
 
-    r *= 100, g *= 100, b *= 100;
+    if(varG <= 0.4045) {
+        varG /= 12.92;
+    }
+    else {
+        varG = Math.pow((varG + 0.055) / 1.055, 2.4);
+    }
 
-    var X = r * 0.4124 + g * 0.3576 + b * 0.1805;
-    var Y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-    var Z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+    if(varB <= 0.4045) {
+        varB /= 12.92;
+    }
+    else {
+        varB = Math.pow((varB + 0.055) / 1.055, 2.4);
+    }
 
-    var U = (4 * X) / (X + (15 * Y) + (3 * Z));
-    var V = (9 * Y) / (X + (15 * Y) + (3 * Z));
-    Y = Y / ref_Y;
+    varR *= 100;
+    varG *= 100;
+    varB *= 100;
 
-    if (Y > 0.008856)
-        Y = Math.pow(Y, 1/3);
-    else
-        Y = (7.787 * Y) + (4.0 / 29.0);
+    var xyz = [0, 0, 0];
+    xyz[0] = 0.4124 * varR + 0.3576 * varG + 0.1805 * varB;
+    xyz[1] = 0.2126 * varR + 0.7152 * varG + 0.0722 * varB;
+    xyz[2] = 0.0193 * varR + 0.1192 * varG + 0.9505 * varB;
 
-    var ref_X = 95.047;
-    var ref_Y = 100.000;
-    var ref_Z = 108.883;
+    //X from 0 to  95.047
+    //Y from 0 to 100.000
+    //Z from 0 to 108.883
 
-
-    var ref_U = (4 * ref_X) / (ref_X + (15 * ref_Y) + (3 * ref_Z));
-    var ref_V = (9 * ref_Y) / (ref_X + (15 * ref_Y) + (3 * ref_Z));
-
-    res_L = (116 * Y) - 16;
-    res_U = 13 * res_L * (U - ref_U);
-    res_V = 13 * res_L * (V - ref_V);
-
-    return [res_L, ref_U, ref_V];
+    return xyz;
 }
 
-function luvToRgb(res_L, res_U, res_V) {
-    var Y = (res_L + 16) / 116;
-    if (Math.pow(Y, 3) > 0.008856)
-        Y = Math.pow(Y, 3);
-    else
-        Y = (Y - 4.0 / 29.0) / 7.787;
+function fromXYZtoRGB(xyz) {
+    var xVar = xyz[0] / 100;
+    var yVar = xyz[1] / 100;
+    var zVar = xyz[2] / 100;
 
-    var ref_X = 95.047;
-    var ref_Y = 100.000;
-    var ref_Z = 108.883;
+    var varR = 3.2406 * xVar - 1.5372 * yVar - 0.4986 * zVar;
+    var varG = -0.9689 * xVar + 1.8758 * yVar + 0.0415 * zVar;
+    var varB = 0.0557 * xVar - 0.2040 * yVar + 1.0570 * zVar;
 
-    var ref_U = (4 * ref_X) / (ref_X + (15 * ref_Y) + (3 * ref_Z));
-    var ref_V = (9 * ref_Y) / (ref_X + (15 * ref_Y) + (3 * ref_Z));
+    if(varR > 0.0031308) {
+        varR = 1.055 * (Math.pow(varR, 1 / 2.4)) - 0.055;
+    }
+    else {
+        varR *= 12.92;
+    }
 
-    var U = res_U / (13 * res_L) + ref_U;
-    var V = res_V / (13 * res_L) + ref_V;
+    if(varG > 0.0031308) {
+        varG = 1.055 * (Math.pow(varG, 1 / 2.4)) - 0.055;
+    }
+    else {
+        varG *= 12.92;
+    }
 
-    Y = Y * ref_Y;
-    var X =  - (9 * Y * U) / (( U - 4) * V  - U * V);
-    var Z = (9 * Y - (15 * V * Y) - (V * X)) / (3 * V);
+    if(varB > 0.0031308) {
+        varB = 1.055 * (Math.pow(varB, 1 / 2.4)) - 0.055;
+    }
+    else {
+        varB *= 12.92;
+    }
 
-    X = X / 100;
-    Y = Y / 100;
-    Z = Z / 100;
+    var rValue = varR * 255;
+    var gValue = varG * 255;
+    var bValue = varB * 255;
 
-    R = X *  3.2406 + Y * (-1.5372) + Z * (-0.4986);
-    G = X * (-0.9689) + Y *  1.8758 + Z *  0.0415;
-    B = X *  0.0557 + Y * (-0.2040) + Z *  1.0570;
+    var colorsPure = true;
 
-    if (R > 0.0031308)
-        R = 1.055 * (Math.pow(R , (1 / 2.4))) - 0.055;
-    else
-        R = 12.92 * R;
-    if (G > 0.0031308)
-        G = 1.055 * (Math.pow(G, (1 / 2.4))) - 0.055;
-    else
-        G = 12.92 * G;
-    if (B > 0.0031308)
-        B = 1.055 * (Math.pow(B, (1 / 2.4))) - 0.055;
-    else
-        B = 12.92 * B;
+    if(rValue < 0) {
+        colorsPure = false;
+        rValue = 0;
+    }
+    if(rValue > 255) {
+        colorsPure = false;
+        rValue = 255;
+    }
+    if(gValue < 0) {
+        colorsPure = false;
+        gValue = 0;
+    }
+    if(gValue > 255) {
+        colorsPure = false;
+        gValue = 255;
+    }
+    if(bValue < 0) {
+        colorsPure = false;
+        bValue = 0;
+    }
+    if(bValue > 255) {
+        colorsPure = false;
+        bValue = 255;
+    }
 
-    return [R, G, B];
+    console.log("Was error: " + !colorsPure);
+
+    return [rValue, gValue, bValue];
+}
+
+function fromXYZtoLUV(xyz) {
+    var luv = [0, 0, 0];
+    luv[0] = xyz[1];
+    if(xyz[0] == 0 && xyz[2] == 0) {
+        luv[1] = 0;
+        luv[2] = 0;
+    }
+    else {
+        luv[1] = 4 * xyz[0] / (xyz[0] + 15 * xyz[1] + 3 * xyz[2]);
+        luv[2] = 9 * xyz[1] / (xyz[0] + 15 * xyz[1] + 3 * xyz[2]);
+    }
+    return luv;
+}
+
+function fromLUVtoXYZ(luv) {
+    var xyz = [0, 0, 0];
+    if(luv[2] == 0) {
+        xyz[0] = 0;
+        xyz[1] = 0;
+        xyz[2] = 0;
+        return xyz;
+    }
+    xyz[1] = luv[0];
+    var eq = 9 * xyz[1] / luv[2];
+    xyz[0] = luv[1] * eq / 4;
+    xyz[2] = (eq - xyz[0] - 15 * xyz[1]) / 3;
+    return xyz;
+}
+
+function rgbToLuv(R, G, B) {
+    var xyz = fromRGBtoXYZ([R, G, B]);
+    var luv = fromXYZtoLUV(xyz);
+    return luv;
+}
+
+function luvToRgb(L, U, V) {
+    var xyz = fromLUVtoXYZ([L, U, V]);
+    var rgb = fromXYZtoRGB(xyz);
+    return rgb;
 }
