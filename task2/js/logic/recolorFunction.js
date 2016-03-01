@@ -1,5 +1,7 @@
 // 85, 30, 89 - car
 function recolorImage() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
     var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var data = imgData.data;
 
@@ -28,7 +30,6 @@ function recolorImage() {
         data[i + 1] = newColor[1];
         data[i + 2] = newColor[2];
     }
-    console.log(diff);
     ctx.putImageData(imgData, 0, 0);
 }
 
