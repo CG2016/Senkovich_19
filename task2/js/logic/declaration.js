@@ -5,7 +5,8 @@ img.onload = start;
 img.src = "images/example.jpg";
 function start() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
+    ctx.drawImage(img, canvas.width / 2 - img.width / 2,
+        canvas.height / 2 - img.height / 2);
 }
 
 var LRadiusInput = $('#LRadiusInput');
