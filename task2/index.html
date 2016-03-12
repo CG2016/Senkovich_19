@@ -99,12 +99,12 @@
                 </div>
 
                 <div class="col-md-1">
-                    <input id="UOldInput" type="range" min="-100" max="100" value="30" data-orientation="vertical">
+                    <input id="UOldInput" type="range" min="-200" max="200" value="30" data-orientation="vertical">
                     <output id="UOldOutput"></output>
                 </div>
 
                 <div class="col-md-1">
-                    <input id="VOldInput" type="range" min="-100" max="100" value="89" data-orientation="vertical">
+                    <input id="VOldInput" type="range" min="-200" max="200" value="89" data-orientation="vertical">
                     <output id="VOldOutput"></output>
                 </div>
             </div>
@@ -114,12 +114,12 @@
 
             <div>
                 <div class="col-md-1">
-                    <input id="UNewInput" type="range" min="-100" max="100" value="50" data-orientation="vertical">
+                    <input id="UNewInput" type="range" min="-200" max="200" value="-22" data-orientation="vertical">
                     <output id="UNewOutput"></output>
                 </div>
 
                 <div class="col-md-1">
-                    <input id="VNewInput" type="range" min="-100" max="100" value="50" data-orientation="vertical">
+                    <input id="VNewInput" type="range" min="-200" max="200" value="-125" data-orientation="vertical">
                     <output id="VNewOutput"></output>
                 </div>
             </div>
@@ -163,6 +163,32 @@
     <script type="text/javascript" src="js/logic/converter.js"></script>
     <script type="text/javascript" src="js/logic/recolorFunction.js"></script>
     <script type="text/javascript" src="js/logic/slider.js"></script>
+    <script type="text/javascript">
+        var dropbox = document.getElementById('color-div');
+        dropbox.addEventListener('dragenter', noopHandler, false);
+        dropbox.addEventListener('dragexit', noopHandler, false);
+        dropbox.addEventListener('dragover', noopHandler, false);
+        dropbox.addEventListener('drop', drop, false);
+
+        function noopHandler(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+        }
+
+        function drop(evt) {
+            imageLoading = true;
+            evt.stopPropagation();
+            evt.preventDefault();
+            var image = evt.dataTransfer.files[0];
+            var reader = new FileReader();
+            reader.onload = (function(image) {
+                return function(e) {
+                    img.src = e.target.result;
+                };
+            })(image);
+            reader.readAsDataURL(image);
+        }
+    </script>
 
 </body>
 

@@ -4,6 +4,7 @@ var img = new Image();
 img.onload = start;
 img.src = "images/example.jpg";
 function start() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0);
 }
 
