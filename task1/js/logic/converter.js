@@ -1,3 +1,7 @@
+var X_MAX = 95.047;
+var Y_MAX = 100.0;
+var Z_MAX = 108.883;
+
 function rgbToHsl(R, G, B) {
     r = R/255, g = G/255, b = B/255;
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -44,151 +48,106 @@ function hslToRgb(h, s, l) {
     return [r * 255, g * 255, b * 255];
 }
 
-function fromRGBtoXYZ(rgb) {
-    var varR = rgb[0] / 255;
-    var varG = rgb[1] / 255;
-    var varB = rgb[2] / 255;
-
-    if(varR <= 0.4045) {
-        varR /= 12.92;
+function convertLuvToXyz(luv) {
+    var L = luv[0];
+    var U = luv[1];
+    var V = luv[2];
+    if (U == 0 && V == 0 && L == 0) {
+        return [0, 0, 0];
     }
-    else {
-        varR = Math.pow((varR + 0.055) / 1.055, 2.4);
-    }
+    var tmpY = (L + 16) / 116.0;
+    tmpY = Math.pow(tmpY, 3) > 0.008856 ? Math.pow(tmpY, 3) : (tmpY - 16.0 / 116) / 7.787;
 
-    if(varG <= 0.4045) {
-        varG /= 12.92;
-    }
-    else {
-        varG = Math.pow((varG + 0.055) / 1.055, 2.4);
-    }
+    var refU = (4 * X_MAX) / (X_MAX + (15 * Y_MAX) + (3 * Z_MAX));
+    var refV = (9 * Y_MAX) / (X_MAX + (15 * Y_MAX) + (3 * Z_MAX));
 
-    if(varB <= 0.4045) {
-        varB /= 12.92;
-    }
-    else {
-        varB = Math.pow((varB + 0.055) / 1.055, 2.4);
-    }
+    var tmpU = U / (13 * L) + refU;
+    var tmpV = V / (13 * L) + refV;
 
-    varR *= 100;
-    varG *= 100;
-    varB *= 100;
+    var Y = tmpY * 100;
+    var X = -(9 * Y * tmpU) / ((tmpU - 4) * tmpV - tmpU * tmpV);
+    var Z = (9 * Y - (15 * tmpV * Y) - (tmpV * X)) / (3 * tmpV);
 
-    var xyz = [0, 0, 0];
-    xyz[0] = 0.4124 * varR + 0.3576 * varG + 0.1805 * varB;
-    xyz[1] = 0.2126 * varR + 0.7152 * varG + 0.0722 * varB;
-    xyz[2] = 0.0193 * varR + 0.1192 * varG + 0.9505 * varB;
+    Y = (Y < Y_MAX && Y > 0.) ? Y : (Y < 0.) ? 0 : Y_MAX;
+    X = (X < X_MAX && X > 0.) ? X : (X < 0.) ? 0 : X_MAX;
+    Z = (Z < Z_MAX && Z > 0.) ? Z : (Z < 0.) ? 0 : Z_MAX;
 
-    //X from 0 to  95.047
-    //Y from 0 to 100.000
-    //Z from 0 to 108.883
-
-    return xyz;
+    return [X, Y, Z];
 }
 
-function fromXYZtoRGB(xyz) {
-    var xVar = xyz[0] / 100;
-    var yVar = xyz[1] / 100;
-    var zVar = xyz[2] / 100;
+function convertXyzToRgb(xyz) {
+    var X = xyz[0] / 100.0;
+    var Y = xyz[1] / 100.0;
+    var Z = xyz[2] / 100.0;
+    var tmpX = X;
+    var tmpY = Y;
+    var tmpZ = Z;
 
-    var varR = 3.2406 * xVar - 1.5372 * yVar - 0.4986 * zVar;
-    var varG = -0.9689 * xVar + 1.8758 * yVar + 0.0415 * zVar;
-    var varB = 0.0557 * xVar - 0.2040 * yVar + 1.0570 * zVar;
+    var tmpR = tmpX * 3.2406 + tmpY * -1.5372 + tmpZ * -0.4986;
+    var tmpG = tmpX * -0.9689 + tmpY * 1.8758 + tmpZ * 0.0415;
+    var tmpB = tmpX * 0.0557 + tmpY * -0.2040 + tmpZ * 1.0570;
 
-    if(varR > 0.0031308) {
-        varR = 1.055 * (Math.pow(varR, 1 / 2.4)) - 0.055;
-    }
-    else {
-        varR *= 12.92;
-    }
+    tmpR = tmpR > 0.0031308 ? 1.055 * Math.pow(tmpR, 1 / 2.4) - 0.055 : 12.92 * tmpR;
+    tmpG = tmpG > 0.0031308 ? 1.055 * Math.pow(tmpG, 1 / 2.4) - 0.055 : 12.92 * tmpG;
+    tmpB = tmpB > 0.0031308 ? 1.055 * Math.pow(tmpB, 1 / 2.4) - 0.055 : 12.92 * tmpB;
 
-    if(varG > 0.0031308) {
-        varG = 1.055 * (Math.pow(varG, 1 / 2.4)) - 0.055;
-    }
-    else {
-        varG *= 12.92;
-    }
+    var red = tmpR*255;
+    var green = tmpG*255;
+    var blue = tmpB*255;
 
-    if(varB > 0.0031308) {
-        varB = 1.055 * (Math.pow(varB, 1 / 2.4)) - 0.055;
-    }
-    else {
-        varB *= 12.92;
-    }
-
-    var rValue = varR * 255;
-    var gValue = varG * 255;
-    var bValue = varB * 255;
-
-    var colorsPure = true;
-
-    if(rValue < 0) {
-        colorsPure = false;
-        rValue = 0;
-    }
-    if(rValue > 255) {
-        colorsPure = false;
-        rValue = 255;
-    }
-    if(gValue < 0) {
-        colorsPure = false;
-        gValue = 0;
-    }
-    if(gValue > 255) {
-        colorsPure = false;
-        gValue = 255;
-    }
-    if(bValue < 0) {
-        colorsPure = false;
-        bValue = 0;
-    }
-    if(bValue > 255) {
-        colorsPure = false;
-        bValue = 255;
-    }
-
-    console.log("Was error: " + !colorsPure);
-
-    return [rValue, gValue, bValue];
+    return [red, green, blue];
 }
 
-function fromXYZtoLUV(xyz) {
-    var luv = [0, 0, 0];
-    luv[0] = xyz[1];
-    if(xyz[0] == 0 && xyz[2] == 0) {
-        luv[1] = 0;
-        luv[2] = 0;
+function convertRgbToXyz(rgb) {
+    var tmpRed = rgb[0];
+    var tmpBlue = rgb[2];
+    var tmpGreen = rgb[1];
+
+    tmpRed = tmpRed > 0.04045 ? Math.pow((tmpRed + 0.055) / 1.055, 2.4) : tmpRed / 12.92;
+    tmpBlue = tmpBlue > 0.04045 ? Math.pow((tmpBlue + 0.055) / 1.055, 2.4) : tmpBlue / 12.92;
+    tmpGreen = tmpGreen > 0.04045 ? Math.pow((tmpGreen + 0.055) / 1.055, 2.4) : tmpGreen / 12.92;
+
+    tmpRed *= 100;
+    tmpGreen *= 100;
+    tmpBlue *= 100;
+
+    var X = tmpRed * 0.4124 + tmpGreen * 0.3576 + tmpBlue * 0.1805;
+    var Y = tmpRed * 0.2126 + tmpGreen * 0.7152 + tmpBlue * 0.0722;
+    var Z = tmpRed * 0.0193 + tmpGreen * 0.1192 + tmpBlue * 0.9505;
+
+    return [X, Y, Z];
+}
+
+function convertXyzToLuv(xyz) {
+    var X = xyz[0];
+    var Y = xyz[1];
+    var Z = xyz[2];
+    if (X == 0 && Y == 0 && Z == 0) {
+        return [0, 0, 0];
     }
-    else {
-        luv[1] = 4 * xyz[0] / (xyz[0] + 15 * xyz[1] + 3 * xyz[2]);
-        luv[2] = 9 * xyz[1] / (xyz[0] + 15 * xyz[1] + 3 * xyz[2]);
-    }
+    var tmpU = (4 * X) / (X + (15 * Y) + (3 * Z));
+    var tmpV = (9 * Y) / (X + (15 * Y) + (3 * Z));
+    var tmpY = Y / 100;
+    tmpY = tmpY > 0.008856 ? Math.pow(tmpY, 1.0 / 3) : (7.787 * tmpY) + (16.0 / 116);
+
+    var refU = (4 * X_MAX) / (X_MAX + (15 * Y_MAX) + (3 * Z_MAX));
+    var refV = (9 * Y_MAX) / (X_MAX + (15 * Y_MAX) + (3 * Z_MAX));
+
+    var L = (116 * tmpY) - 16;
+    var U = 13 * L * (tmpU - refU);
+    var V = 13 * L * (tmpV - refV);
+
+    return [L, U, V];
+}
+
+function fromRGBtoLUV(rgb) {
+    var xyz = convertRgbToXyz(rgb);
+    var luv = convertXyzToLuv(xyz);
     return luv;
 }
 
-function fromLUVtoXYZ(luv) {
-    var xyz = [0, 0, 0];
-    if(luv[2] == 0) {
-        xyz[0] = 0;
-        xyz[1] = 0;
-        xyz[2] = 0;
-        return xyz;
-    }
-    xyz[1] = luv[0];
-    var eq = 9 * xyz[1] / luv[2];
-    xyz[0] = luv[1] * eq / 4;
-    xyz[2] = (eq - xyz[0] - 15 * xyz[1]) / 3;
-    return xyz;
-}
-
-function rgbToLuv(R, G, B) {
-    var xyz = fromRGBtoXYZ([R, G, B]);
-    var luv = fromXYZtoLUV(xyz);
-    return luv;
-}
-
-function luvToRgb(L, U, V) {
-    var xyz = fromLUVtoXYZ([L, U, V]);
-    var rgb = fromXYZtoRGB(xyz);
+function fromLUVtoRGB(luv) {
+    var xyz = convertLuvToXyz(luv);
+    var rgb = convertXyzToRgb(xyz);
     return rgb;
 }

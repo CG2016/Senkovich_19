@@ -17,7 +17,7 @@ Rinput.rangeslider({
         updateCOutput(Coutput[0], 255 - this.value);
         var hsl = rgbToHsl(this.value, Ginput.val(), Binput.val());
         updateHSL(hsl[0]*360, hsl[1]*100, hsl[2]*100);
-        var luv = rgbToLuv(this.value, Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([this.value/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [this.value, Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -44,7 +44,7 @@ Ginput.rangeslider({
         updateMOutput(Moutput[0], 255 - this.value);
         var hsl = rgbToHsl(Rinput.val(), this.value, Binput.val());
         updateHSL(hsl[0]*360, hsl[1]*100, hsl[2]*100);
-        var luv = rgbToLuv(Rinput.val(), this.value, Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, this.value/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), this.value, Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -71,7 +71,7 @@ Binput.rangeslider({
         updateYOutput(Youtput[0], 255 - this.value);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), this.value);
         updateHSL(hsl[0]*360, hsl[1]*100, hsl[2]*100);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), this.value);
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, this.value/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), this.value].join(',') + ')';
         triggerChange = true;
@@ -97,7 +97,7 @@ Cinput.rangeslider({
         updateROutput(Routput[0], 255 - this.value);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), Binput.val());
         updateHSL(hsl[0]*360, hsl[1]*100, hsl[2]*100);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -123,7 +123,7 @@ Minput.rangeslider({
         updateGOutput(Goutput[0], 255 - this.value);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), Binput.val());
         updateHSL(hsl[0]*360, hsl[1]*100, hsl[2]*100);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -149,7 +149,7 @@ Yinput.rangeslider({
         updateBOutput(Boutput[0], 255 - this.value);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), Binput.val());
         updateHSL(hsl[0]*360, hsl[1]*100, hsl[2]*100);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -173,7 +173,7 @@ Hinput.rangeslider({
         var rgb = hslToRgb(this.value/360, Sinput.val()/100, Linput.val()/100);
         updateRGB(rgb[0], rgb[1], rgb[2]);
         updateCMY(rgb[0], rgb[1], rgb[2]);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -197,7 +197,7 @@ Sinput.rangeslider({
         var rgb = hslToRgb(Hinput.val()/360, this.value/100, Linput.val()/100);
         updateRGB(rgb[0], rgb[1], rgb[2]);
         updateCMY(rgb[0], rgb[1], rgb[2]);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -221,7 +221,7 @@ Linput.rangeslider({
         var rgb = hslToRgb(Hinput.val()/360, Sinput.val()/100, this.value/100);
         updateRGB(rgb[0], rgb[1], rgb[2]);
         updateCMY(rgb[0], rgb[1], rgb[2]);
-        var luv = rgbToLuv(Rinput.val(), Ginput.val(), Binput.val());
+        var luv = fromRGBtoLUV([Rinput.val()/255, Ginput.val()/255, Binput.val()/255]);
         updateLUV(luv[0], luv[1], luv[2]);
         colorDiv.style.backgroundColor = 'rgb(' + [Rinput.val(), Ginput.val(), Binput.val()].join(',') + ')';
         triggerChange = true;
@@ -242,7 +242,7 @@ linput.rangeslider({
     updatelOutput(loutput[0], this.value);
     if (triggerChange) {
         triggerChange = false;
-        var rgb = luvToRgb(this.value, uinput.val(), vinput.val());
+        var rgb = fromLUVtoRGB([parseInt(this.value), parseInt(uinput.val()), parseInt(vinput.val())]);
         updateRGB(rgb[0], rgb[1], rgb[2]);
         updateCMY(rgb[0], rgb[1], rgb[2]);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), Binput.val());
@@ -266,7 +266,7 @@ uinput.rangeslider({
     updateuOutput(uoutput[0], this.value);
     if (triggerChange) {
         triggerChange = false;
-        var rgb = luvToRgb(linput.val(), this.value, vinput.val());
+        var rgb = fromLUVtoRGB([parseInt(linput.val()), parseInt(this.value), parseInt(vinput.val())]);
         updateRGB(rgb[0], rgb[1], rgb[2]);
         updateCMY(rgb[0], rgb[1], rgb[2]);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), Binput.val());
@@ -290,7 +290,9 @@ vinput.rangeslider({
     updatevOutput(voutput[0], this.value);
     if (triggerChange) {
         triggerChange = false;
-        var rgb = luvToRgb(linput.val(), uinput.val(), this.value);
+        console.log([linput.val(), uinput.val(), this.value]);
+        var rgb = fromLUVtoRGB([parseInt(linput.val()), parseInt(uinput.val()), parseInt(this.value)]);
+        console.log(rgb);
         updateRGB(rgb[0], rgb[1], rgb[2]);
         updateCMY(rgb[0], rgb[1], rgb[2]);
         var hsl = rgbToHsl(Rinput.val(), Ginput.val(), Binput.val());
