@@ -6,7 +6,7 @@ function convertLuvToXyz(luv) {
     var L = luv[0];
     var U = luv[1];
     var V = luv[2];
-    if (U == 0 && V == 0 && L == 0) {
+    if (U == 0 && V == 0 && L == -100) {
         return [0, 0, 0];
     }
     var tmpY = (L + 16) / 116.0;
