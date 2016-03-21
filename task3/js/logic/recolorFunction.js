@@ -5,5 +5,6 @@ function recolorImage() {
         this.brightness(parseInt(brightnessOutput.val()));
         this.contrast(parseInt(contrastOutput.val()));
         this.render();
+        getHistograms();
     });
 }
