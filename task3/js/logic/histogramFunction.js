@@ -6,8 +6,6 @@ function getHistograms() {
     var imgData = ctx.getImageData(leftCornerX, leftCornerY, imageWidth, imageHeight);
     var data = imgData.data;
 
-    console.log(data.slice(4, 8));
-
     var rArr = [];
     var gArr = [];
     var bArr = [];
@@ -70,6 +68,14 @@ function getHistograms() {
     $('#blue-distribution-diagram').removeClass('hidden');
     $('#blue-distribution-diagram').removeClass('js-plotly-plot');
     $('#blue-distribution-diagram').empty();
+
+    var zeroCount = 0;
+    for (var i = 0; i < rArr.length; i++) {
+        if (rArr[i] == 0)
+            zeroCount++;
+    }
+    console.log(rArr.length);
+    console.log(zeroCount);
 
     var rData = [
         {

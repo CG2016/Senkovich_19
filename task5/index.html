@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Task5</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/portfolio-item.css" rel="stylesheet">
+
+    <!--=== Main Stylesheets ===-->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+
+    <!-- Other CSS -->
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/jquery.vegas.css" />
+
+    <!-- Rangeslider.css -->
+    <link rel="stylesheet" href="css/rangeslider.css" />
+
+</head>
+
+<body>
+    <!--=== Preloader section starts ===-->
+    <section id="preloader">
+        <div class="loading-circle fa-spin"></div>
+    </section>
+    <!--=== Preloader section Ends ===-->
+
+    <!--=== Header section Starts ===-->
+    <div id="header" class="navbar navbar-fixed-top">
+        <!-- sticky-bar Starts-->
+        <div class="sticky-bar-wrap">
+            <div class="sticky-section effects-navbar">
+                <div id="topbar-hold" class="nav-hold container">
+                    <nav class="navbar" role="navigation">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- sticky-bar Ends-->
+        <!--=== Header section Ends ===-->
+    </div>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Color Div Heading -->
+        <div class="row">
+            <div class="col-lg-12 center">
+                <h1 class="page-header"></h1>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Color Div Row -->
+        <div class="row">
+            <div id="grid" class="">
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+            <div class="col-sm-3 col-xs-3">
+                <button onclick="stepByStep()"
+                    class="btn btn-default center-block" type="button"><h6>Step by step</h6></button>
+            </div>
+            <div class="col-sm-3 col-xs-3">
+                <button onclick="dda()"
+                    class="btn btn-default center-block" type="button"><h6>DDA</h6></button>
+            </div>
+            <div class="col-sm-3 col-xs-3">
+                <button onclick="bresenham()"
+                    class="btn btn-default center-block" type="button"><h6>Bresenham</h6></button>
+            </div>
+            <div class="col-sm-3 col-xs-3">
+                <button onclick="bresenhamCircle()"
+                    class="btn btn-default center-block" type="button"><h6>Bresenham circle</h6></button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!--==== Slider and Card style plugin ====-->
+    <script type="text/javascript" src="js/jquery.vegas.min.js"></script>
+
+    <!--==== Custom Script files ====-->
+    <script type="text/javascript" src="js/effects-custom.js"></script>
+
+    <!--==== Scroll and navigation plugins ====-->
+    <script type="text/javascript" src="js/jquery.nicescroll.min.js"></script>
+    <script type="text/javascript" src="js/jquery.appear.js"></script>
+
+    <!--==== Rangeslider.js ====-->
+    <script type="text/javascript" src="js/rangeslider.min.js"></script>
+
+    <!--==== Coman.js ====-->
+    <script type="text/javascript" src="js/caman.full.min.js"></script>
+
+    <!--==== Plotly.js ====-->
+    <script type="text/javascript" src="js/plotly.min.js"></script>
+
+    <!--==== Custom stuff ====-->
+    <script type="text/javascript" src="js/logic/declaration.js"></script>
+
+</body>
+
+</html>
