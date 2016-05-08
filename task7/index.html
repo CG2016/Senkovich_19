@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Task1</title>
+    <title>Task7</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -66,7 +66,7 @@
         <!-- Color Div Heading -->
         <div class="row">
             <div class="col-lg-12 center">
-                <h1 class="page-header">Image changes its colors!</h1>
+                <h1 class="page-header"></h1>
             </div>
         </div>
         <!-- /.row -->
@@ -74,61 +74,29 @@
         <!-- Color Div Row -->
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                <div id="color-div" onclick="getHistograms()">
-                    <canvas id="canvas" width="600" height="500"></canvas>
+                <div id="color-div">
+                    <canvas id="canvas" width="600" height="400"></canvas>
                 </div>
             </div>
         </div>
         <!-- /.row -->
 
-        <div class="row top-buffer col-md-offset-4">
-            <div>
-                <div class="col-md-1">
-                    <input id="brightness-input" type="range" min="-100" max="100" value="0" data-orientation="vertical">
-                    <output id="brightness-output"></output>
-                </div>
-
-                <div class="col-md-4">
-                </div>
-
-                <div class="col-md-1">
-                    <input id="contrast-input" type="range" min="-100" max="100" value="0" data-orientation="vertical">
-                    <output id="contrast-output"></output>
-                </div>
+        <div class="row">
+            <div class="col-sm-4 col-xs-4">
+                <button onclick="cohen()"
+                    class="btn btn-default center-block" type="button"><h6>Cohen-Sutherland</h6></button>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+                <button onclick="midpoint()"
+                    class="btn btn-default center-block" type="button"><h6>Midpoint</h6></button>
+            </div>
+            <div class="col-sm-4 col-xs-4">
+                <button onclick="cyrus()"
+                    class="btn btn-default center-block" type="button"><h6>Cyrus-Beck</h6></button>
             </div>
         </div>
 
-        <!-- Title Div Row -->
-        <div class="row top-buffer col-md-offset-5">
-            Brightness and contrast
-        </div>
-        <!-- /.row -->
-
-        <!-- Histograms Div Rows -->
-        <div class="row top-buffer hidden">
-            <div id="red-distribution-diagram" class="col-md-12"></div>
-        </div>
-        <div class="row top-buffer center hidden">
-            Red distribution diagram
-        </div>
-        <div class="row top-buffer hidden">
-            <div id="green-distribution-diagram" class="col-md-12"></div>
-        </div>
-        <div class="row top-buffer center hidden">
-            Green distribution diagram
-        </div>
-        <div class="row top-buffer hidden">
-            <div id="blue-distribution-diagram" class="col-md-12"></div>
-        </div>
-        <div class="row top-buffer center hidden">
-            Blue distribution diagram
-        </div>
-        <!-- /.row -->
-
-        <!-- Average Div Row -->
-        <div id="average-color" class="row col-md-12 center hidden">
-        </div>
-        <!-- /.row -->
+    </div>
 
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
@@ -149,18 +117,8 @@
     <!--==== Rangeslider.js ====-->
     <script type="text/javascript" src="js/rangeslider.min.js"></script>
 
-    <!--==== Coman.js ====-->
-    <script type="text/javascript" src="js/caman.full.min.js"></script>
-
-    <!--==== Plotly.js ====-->
-    <script type="text/javascript" src="js/plotly.min.js"></script>
-
     <!--==== Custom stuff ====-->
     <script type="text/javascript" src="js/logic/declaration.js"></script>
-    <script type="text/javascript" src="js/logic/recolorFunction.js"></script>
-    <script type="text/javascript" src="js/logic/slider.js"></script>
-    <script type="text/javascript" src="js/logic/dragndrop.js"></script>
-    <script type="text/javascript" src="js/logic/histogramFunction.js"></script>
 
 </body>
 

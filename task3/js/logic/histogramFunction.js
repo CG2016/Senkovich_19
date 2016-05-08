@@ -74,8 +74,6 @@ function getHistograms() {
         if (rArr[i] == 0)
             zeroCount++;
     }
-    console.log(rArr.length);
-    console.log(zeroCount);
 
     var rData = [
         {

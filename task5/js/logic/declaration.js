@@ -1,7 +1,7 @@
 var GRID_DIMENSTION = 15;
 var centerX = (GRID_DIMENSTION - 1)/2;
 var centerY = centerX;
-var radius = 7;
+var radius = 3;
 
 var lastClicked = [];
 var calculated = false;
