@@ -176,8 +176,6 @@ function set_outcode(point) {
     var x = point.x;
     var y = point.y;
 
-    console.log(xmin + ' ' + xmax + ' ' + ymin + ' ' + ymax);
-
     if (y > ymax)
         outcode = outcode + '1';
     else
@@ -273,6 +271,60 @@ function midpoint() {
         prepareCanvas();
         return;
     }
+
+    xmin = rectangle[0].x;
+    ymin = rectangle[0].y;
+    xmax = rectangle[1].x;
+    ymax = rectangle[1].y;
+
+    var linesToDelete = [];
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        checkLine(linesToDelete, line);
+    }
+
+    for (var i = 0; i < linesToDelete.length; i++) {
+        var line = linesToDelete[i];
+        delete_line(line[0], line[1]);
+    }
+}
+
+
+function checkLine(linesToDelete, line) {
+    console.log(segmentLength(line));
+    if (segmentLength(line) < 2)
+        return;
+
+    var start = line[0];
+    var end = line[1];
+    var o1 = set_outcode(start);
+    var o2 = set_outcode(end);
+
+    var o1Int = parseInt(o1, 2);
+    var o2Int = parseInt(o2, 2);
+    if(o1 == '0000' && o2 == '0000') {
+        console.log('1');
+    }
+    else if ( (o1Int & o2Int) != 0) {
+        console.log('2');
+        linesToDelete.push(line);
+    }
+    else {
+        var midpoint = new Point((start.x + end.x)/2, (start.y + end.y)/2);
+        var line1 = [start, midpoint];
+        var line2 = [end, midpoint];
+        checkLine(linesToDelete, line1);
+        checkLine(linesToDelete, line2);
+    }
+}
+
+
+function segmentLength(line) {
+    var start = line[0];
+    var end = line[1];
+    var dx = start.x - end.x;
+    var dy = start.y - end.y;
+    return Math.sqrt(dx*dx + dy*dy);
 }
 
 
