@@ -46,16 +46,31 @@ $(document).on("contextmenu", "canvas", function(event) {
         return false;
 
     var coordinates = canvasCoordinates(this, event);
-    if (beginPoint != null) {
-        var endPoint = new Point(coordinates.x, coordinates.y);
-        drawRect(beginPoint, endPoint);
-        var beginPointSaved = beginPoint;
-        rectangle = [beginPointSaved, endPoint];
-        beginPoint = null;
-        clickingDisabled = true;
+    if (option != 'cyrus') {
+        if (beginPoint != null) {
+            var endPoint = new Point(coordinates.x, coordinates.y);
+            drawRect(beginPoint, endPoint);
+            var beginPointSaved = beginPoint;
+            rectangle = [beginPointSaved, endPoint];
+            beginPoint = null;
+            clickingDisabled = true;
+        }
+        else {
+            beginPoint = new Point(coordinates.x, coordinates.y);
+        }
     }
     else {
-        beginPoint = new Point(coordinates.x, coordinates.y);
+        var point = new Point(coordinates.x, coordinates.y);
+        convex.push(point);
+        if (convex.length != 1) {
+            var previousPoint = convex[convex.length - 2];
+            ctx.strokeStyle = '#ff0000';
+
+            ctx.beginPath();
+            ctx.moveTo(previousPoint.x, previousPoint.y);
+            ctx.lineTo(point.x, point.y);
+            ctx.stroke();
+        }
     }
     return false;
 });
@@ -264,6 +279,16 @@ function delete_line(start, end) {
 }
 
 
+function render_line(start, end) {
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+}
+
+
 function midpoint() {
     clickingDisabled = false;
     if (option == '' || option != 'midpoint') {
@@ -310,6 +335,7 @@ function checkLine(linesToDelete, line) {
         linesToDelete.push(line);
     }
     else {
+        console.log('3');
         var midpoint = new Point((start.x + end.x)/2, (start.y + end.y)/2);
         var line1 = [start, midpoint];
         var line2 = [end, midpoint];
@@ -334,5 +360,176 @@ function cyrus() {
         option = 'cyrus';
         prepareCanvas();
         return;
+    }
+
+    if (convex.length < 3)
+        return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = '#ff0000';
+
+    for (var i = 0; i < convex.length; i++) {
+        var beginPoint = convex[i];
+        var lastPoint = convex[(i+1)%convex.length];
+
+        ctx.beginPath();
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+        ctx.lineTo(beginPoint.x, beginPoint.y);
+        ctx.stroke();
+    }
+
+    var linesToRender = [];
+
+    var TinByLine = {};
+    var ToutByLine = {};
+
+    var inEdgeByLine = {};
+    var outEdgeByLine = {};
+
+    for (var i = 0; i < convex.length; i++) {
+        var start = convex[i];
+        var end = convex[(i+1)%convex.length];
+        var dx = end.x - start.x;
+        var dy = end.y - start.y;
+        var normal1 = [-dy, dx];
+        var normal2 = [dy, -dx];
+        var nextPoint = convex[(i+2)%convex.length];
+        var nextVector = [nextPoint.x - end.x, nextPoint.y - end.y];
+        var crossProduct1 = nextVector[0]*normal1[0] + nextVector[1]*normal1[1];
+        var innerNormal = normal1;
+        if (crossProduct1 < 0)
+            innerNormal = normal2;
+        for (var j = 0; j < lines.length; j++) {
+            var line = lines[j];
+            var A1 = line[0].x - start.x;
+            var A2 = line[0].y - start.y;
+            var B1 = line[1].x - line[0].x;
+            var B2 = line[1].y - line[0].y;
+            var C1 = end.x - start.x;
+            var C2 = end.y - start.y;
+            var t = (A1*B2-A2*B1)/(B2*C1-C2*B1);
+            var t1 = (A2*C1-A1*C2)/(B1*C2-C1*B2);
+            var ololo = A1+t1*B1-t*C1;
+            var ololo1 = A2+t1*B2-t*C2;
+            console.log('t');
+            console.log(t);
+            console.log('t1');
+            console.log(t1);
+            console.log('ololo');
+            console.log(ololo.toFixed(2));
+            console.log('ololo1');
+            console.log(ololo1.toFixed(2));
+            var dx = line[0].x - line[1].x;
+            var dy = line[0].y - line[1].y;
+            var P1P2 = [dx, dy];
+            var S = P1P2[0]*innerNormal[0] + P1P2[1]*innerNormal[1];
+            var Tin = [];
+            var Tout = [];
+            var hash = (line[0].x.toString() + line[0].y.toString() + ' ' + line[1].x.toString() + line[1].y.toString());
+            if (t <= 1 && t >= 0 && S > 0 && t1 >= 0 && t1 <= 1) {
+                if (!(hash in TinByLine)) {
+                    TinByLine[hash] = [];
+                    inEdgeByLine[hash] = [];
+                }
+                TinByLine[hash].push(t);
+                inEdgeByLine[hash].push([start, end]);
+            }
+            else if (t <= 1 && t >= 0 && S < 0 && t1 >= 0 && t1 <= 1) {
+                if (!(hash in ToutByLine)) {
+                    ToutByLine[hash] = [];
+                    outEdgeByLine[hash] = [];
+                }
+                ToutByLine[hash].push(t);
+                outEdgeByLine[hash].push([start, end]);
+            }
+        }
+    }
+    console.log('ToutByLine[i]');
+    for (var line in ToutByLine) {
+        console.log('line');
+        console.log(line);
+        console.log('Ts');
+        console.log(ToutByLine[line]);
+    }
+    console.log();
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        console.log('line');
+        console.log(line[0]);
+        console.log(line[1]);
+        var hash = (line[0].x.toString() + line[0].y.toString() + ' ' + line[1].x.toString() + line[1].y.toString());
+        var Tin = TinByLine[hash];
+        var Tout = ToutByLine[hash];
+        console.log('Tin');
+        console.log(Tin);
+        console.log('Tout');
+        console.log(Tout);
+        if (!Tin && !Tout) {
+            console.log('1');
+            continue;
+        }
+        else if (Tin && Tout) {
+            console.log('2');
+            var maxTin = Math.max.apply(Math, Tin);
+            console.log('maxTin');
+            console.log(maxTin);
+            var maxTinIndex = Tin.indexOf(maxTin);
+            console.log('maxTinIndex');
+            console.log(maxTinIndex);
+            var minTout = Math.min.apply(Math, Tout);
+            console.log('minTout');
+            console.log(minTout);
+            var minToutIndex = Tout.indexOf(minTout);
+            console.log('minToutIndex');
+            console.log(minToutIndex);
+            console.log(maxTin);
+            console.log(minTout);
+            var edgeForMaxIn = inEdgeByLine[hash][maxTinIndex];
+            var edgeForMinOut = outEdgeByLine[hash][minToutIndex];
+            console.log('edgeForMaxIn');
+            console.log(edgeForMaxIn[0]);
+            console.log(edgeForMaxIn[1]);
+            console.log('edgeForMinOut');
+            console.log(edgeForMinOut[0]);
+            console.log(edgeForMinOut[1]);
+            var maxInStartX = edgeForMaxIn[0].x + maxTin*(edgeForMaxIn[1].x - edgeForMaxIn[0].x);
+            var maxInStartY = edgeForMaxIn[0].y + maxTin*(edgeForMaxIn[1].y - edgeForMaxIn[0].y);
+            var firstPoint = new Point(maxInStartX, maxInStartY);
+            var minOutStartX = edgeForMinOut[0].x + minTout*(edgeForMinOut[1].x - edgeForMinOut[0].x);
+            var minOutStartY = edgeForMinOut[0].y + minTout*(edgeForMinOut[1].y - edgeForMinOut[0].y);
+            var secondPoint = new Point(minOutStartX, minOutStartY);
+            console.log('Segment');
+            console.log(firstPoint);
+            console.log(secondPoint);
+            linesToRender.push([firstPoint, secondPoint]);
+        }
+        else if (Tout) {
+            console.log('3');
+            var minTout = Math.min.apply(Math, Tout);
+            var minToutIndex = Tout.indexOf(minTout);
+            var edgeForMinOut = outEdgeByLine[hash][minToutIndex];
+            var minOutStartX = edgeForMinOut[0].x + minTout*(edgeForMinOut[1].x - edgeForMinOut[0].x);
+            var minOutStartY = edgeForMinOut[0].y + minTout*(edgeForMinOut[1].y - edgeForMinOut[0].y);
+            var secondPoint = new Point(minOutStartX, minOutStartY);
+            linesToRender.push([line[1], secondPoint]);
+        }
+        else if (Tin) {
+            console.log('4');
+            var maxTin = Math.max.apply(Math, Tin);
+            var maxTinIndex = Tin.indexOf(maxTin);
+            var edgeForMaxIn = inEdgeByLine[hash][maxTinIndex];
+            var maxInStartX = edgeForMaxIn[0].x + maxTin*(edgeForMaxIn[1].x - edgeForMaxIn[0].x);
+            var maxInStartY = edgeForMaxIn[0].y + maxTin*(edgeForMaxIn[1].y - edgeForMaxIn[0].y);
+            var firstPoint = new Point(maxInStartX, maxInStartY);
+            linesToRender.push([firstPoint, line[0]]);
+        }
+    }
+
+    console.log('linesToRender.length');
+    console.log(linesToRender.length);
+    for (var i = 0; i < linesToRender.length; i++) {
+        var line = linesToRender[i];
+        render_line(line[0], line[1]);
     }
 }
