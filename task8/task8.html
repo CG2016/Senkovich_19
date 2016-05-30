@@ -66,7 +66,7 @@
 
                             // Get the size of the inner window (content area) to create a full size renderer
                             canvasWidth = window.innerWidth;
-                            canvasHeight = 525;
+                            canvasHeight = 100;
 
                             // Set the renderers size to the content areas size
                             renderer.setSize(canvasWidth, canvasHeight);
@@ -221,18 +221,22 @@
                         case 'X':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.rotateX(angle * Math.PI / 180);
+                            log_matrix(new THREE.Matrix4().makeRotationX( angle * Math.PI / 180 ));
                             break;
                         case 'Y':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.rotateY(angle * Math.PI / 180);
+                            log_matrix(new THREE.Matrix4().makeRotationY( angle * Math.PI / 180 ));
                             break;
                         case 'Z':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.rotateZ(angle * Math.PI / 180);
+                            log_matrix(new THREE.Matrix4().makeRotationZ( angle * Math.PI / 180 ));
                             break;
                         default:
                             console.log('current axis: ' + selectedAxis);
                             textMesh.rotateX(angle * Math.PI / 180);
+                            log_matrix(new THREE.Matrix4().makeRotationX( angle * Math.PI / 180 ));
                             break;
                     }
                     renderScene(scene, camera);
@@ -246,18 +250,22 @@
                         case 'X':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.translateX(length);
+                            log_matrix(new THREE.Matrix4().makeTranslation( length, 0, 0 ));
                             break;
                         case 'Y':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.translateY(length);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 0, length, 0 ));
                             break;
                         case 'Z':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.translateZ(length);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 0, 0, length ));
                             break;
                         default:
                             console.log('current axis: ' + selectedAxis);
                             textMesh.translateX(length);
+                            log_matrix(new THREE.Matrix4().makeTranslation( length, 0, 0 ));
                             break;
                     }
                     renderScene(scene, camera);
@@ -271,18 +279,22 @@
                         case 'X':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(scale, 1, 1);
+                            log_matrix(new THREE.Matrix4().makeTranslation( scale, 1, 1 ));
                             break;
                         case 'Y':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(1, scale, 1);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 1, scale, 1 ));
                             break;
                         case 'Z':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(1, 1, scale);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 1, 1, scale ));
                             break;
                         default:
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(scale, 1, 1);
+                            log_matrix(new THREE.Matrix4().makeTranslation( scale, 1, 1 ));
                             break;
                     }
                     renderScene(scene, camera);
@@ -293,22 +305,32 @@
                         case 'X':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(0, 1, 1);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 0, 1, 1 ));
                             break;
                         case 'Y':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(1, 0, 1);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 1, 0, 1 ));
                             break;
                         case 'Z':
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(1, 1, 0);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 1, 1, 0 ));
                             break;
                         default:
                             console.log('current axis: ' + selectedAxis);
                             textMesh.scale.set(0, 1, 1);
+                            log_matrix(new THREE.Matrix4().makeTranslation( 0, 1, 1 ));
                             break;
                     }
                     renderScene(scene, camera);
                 });
+
+                function log_matrix (matrix) {
+                    for (var i = 0; i < 16; i+=4) {
+                        console.log(matrix.elements[i] + ' ' + matrix.elements[(i+1)] + ' ' + matrix.elements[(i+2)] + ' ' + matrix.elements[(i+3)]);
+                    }
+                }
             </script>
         </div>
     </body>
