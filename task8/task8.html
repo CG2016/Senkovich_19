@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+        <title>Task8</title>
+
+        <link rel="stylesheet"  href="./css/bootstrap.min.css">
+        <style type="text/css">
+            body {
+                overflow-x: hidden;
+            }
+        </style>
+
+        <!-- Include Three.js libraries -->
+        <script src="./js/three.js"></script>
+
+        <style type="text/css">
+        </style>
+
+        <script src="./js/Detector.js"></script>
+        <script src="./js/renderers/CanvasRenderer.js"></script>
+        <script src="./js/renderers/Projector.js"></script>
+        <script src="./js/jquery-1.11.1.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div id="WebGLCanvas">
+                    <script>
+                        // Global scene object
+                        var scene;
+
+                        // Global camera object
+                        var camera;
+
+                        // Text mesh
+                        var textMesh;
+
+                        var material;
+
+                        // Initialize the scene
+                        initializeScene();
+
+                        /**
+                         * Initialze the scene.
+                         */
+                        function initializeScene(){
+                            // Check whether the browser supports WebGL. If so, instantiate the hardware accelerated
+                            // WebGL renderer. For antialiasing, we have to enable it. The canvas renderer uses
+                            // antialiasing by default.
+                            // The approach of multiplse renderers is quite nice, because your scene can also be
+                            // viewed in browsers, which don't support WebGL. The limitations of the canvas renderer
+                            // in contrast to the WebGL renderer will be explained in the tutorials, when there is a
+                            // difference.
+                            if(Detector.webgl){
+                                renderer = new THREE.WebGLRenderer({antialias:true});
+
+                            // If its not supported, instantiate the canvas renderer to support all non WebGL browsers
+                            } else {
+                                renderer = new THREE.CanvasRenderer();
+                            }
+
+                            // Set the background color of the renderer to black, with full opacity
+                            renderer.setClearColor(0x000000, 1);
+
+                            // Get the size of the inner window (content area) to create a full size renderer
+                            canvasWidth = window.innerWidth;
+                            canvasHeight = 525;
+
+                            // Set the renderers size to the content areas size
+                            renderer.setSize(canvasWidth, canvasHeight);
+
+                            // Get the DIV element from the HTML document by its ID and append the renderers DOM
+                            // object to it
+                            document.getElementById("WebGLCanvas").appendChild(renderer.domElement);
+
+                            // Create the scene, in which all objects are stored (e. g. camera, lights,
+                            // geometries, ...)
+                            scene = new THREE.Scene();
+
+                            // Now that we have a scene, we want to look into it. Therefore we need a camera.
+                            // Three.js offers three camera types:
+                            //  - PerspectiveCamera (perspective projection)
+                            //  - OrthographicCamera (parallel projection)
+                            //  - CombinedCamera (allows to switch between perspective / parallel projection
+                            //    during runtime)
+                            // In this example we create a perspective camera. Parameters for the perspective
+                            // camera are ...
+                            // ... field of view (FOV),
+                            // ... aspect ratio (usually set to the quotient of canvas width to canvas height)
+                            // ... near and
+                            // ... far.
+                            // Near and far define the cliping planes of the view frustum. Three.js provides an
+                            // example (http://mrdoob.github.com/three.js/examples/
+                            // -> canvas_camera_orthographic2.html), which allows to play around with these
+                            // parameters.
+                            // The camera is moved 10 units towards the z axis to allow looking to the center of
+                            // the scene.
+                            // After definition, the camera has to be added to the scene.
+                            camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 1, 100);
+                            camera.position.set(5, 5, 10);
+                            camera.lookAt(scene.position);
+                            scene.add(camera);
+
+                            var axisHelper = new THREE.AxisHelper( 5 );
+                            scene.add( axisHelper );
+
+                            var loader = new THREE.FontLoader();
+                            loader.load( 'fonts/helvetiker_regular.typeface.json', function ( font ) {
+                                var  textGeo = new THREE.TextGeometry('C', {
+                                    size: 3,
+                                    height: 0.5,
+                                    curveSegments: 6,
+                                    font: font,
+                                    style: "normal"
+
+                                });
+                                var  color = new THREE.Color();
+                                color.setRGB(255, 250, 250);
+                                material = new THREE.MeshBasicMaterial({ color: color });
+                                material.needsUpdate = true;
+                                textMesh = new THREE.Mesh(textGeo , material);
+
+                                textMesh.position.x = -0.5;
+                                textMesh.position.y = -0.5;
+                                textMesh.position.z = 0.5;
+                                textMesh.rotation = camera.rotation;
+                                scene.add(textMesh);
+
+                                // Animate the scene
+                                animateScene();
+                            });
+                        }
+
+                        function animateScene(){
+                            /*var geo = textMesh.geometry;
+                            var ololo = new THREE.Geometry();
+                            for (var i = 0; i < geo.vertices.length; i++)
+                            {
+                                var v = geo.vertices[i];
+                                v.z = 0;
+                                ololo.vertices.push(v);
+
+                            }
+                            ololo.computeVertexNormals();
+                            var pyramidMaterial = new THREE.MeshBasicMaterial({
+                                vertexColors:THREE.VertexColors,
+                                side:THREE.DoubleSide
+                            });
+                            var asd = new THREE.Mesh(ololo, pyramidMaterial);
+                            scene.add(asd);*/
+
+                            // Map the 3D scene down to the 2D screen (render the frame)
+                            renderScene();
+                        }
+
+                        function renderScene(){
+                            renderer.render(scene, camera);
+                        }
+                    </script>
+                    <canvas width="1000" height="0" style="width: 1000px; height: 0px;"></canvas>
+                </div>
+            </div>
+            <div class="row action-row">
+                <div class="col-md-1 text-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Axis <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)">X</a></li>
+                        <li><a href="javascript:void(0)">Y</a></li>
+                        <li><a href="javascript:void(0)">Z</a></li>
+                      </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 text-center">
+                    <input id="angle-input" class="form-control" type="number" cols="1" min="0" max="180" step="1" value="0"></input>
+                </div>
+                <div class="col-md-2 text-center">
+                    <input id="length-input" class="form-control" type="number" cols="1" step="1" value="0"></input>
+                </div>
+                <div class="col-md-2 text-center">
+                    <input id="scale-input" class="form-control" type="number" cols="1" step="0.1" value="0"></input>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button id="rotate-button">Rotate</button>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button id="translate-button">Translate</button>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button id="scale-button">Scale</button>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button id="project-button">Project</button>
+                </div>
+
+            </div>
+            <style type="text/css">
+                .action-row {
+                    margin-left: 20px;
+                    margin-bottom: 10px;
+                    margin-top: 10px;
+                }
+            </style>
+            <script>
+                var selectedAxis = 'X';
+
+                $(document).on('click', 'li a', function () {
+                    selectedAxis = $(this).text();
+                    console.log("Selected axis:" + selectedAxis);
+                });
+
+                $('#rotate-button').click(function () {
+                    var angle = parseInt($('#angle-input').val());
+                    console.log(angle);
+
+                    switch (selectedAxis) {
+                        case 'X':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.rotateX(angle * Math.PI / 180);
+                            break;
+                        case 'Y':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.rotateY(angle * Math.PI / 180);
+                            break;
+                        case 'Z':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.rotateZ(angle * Math.PI / 180);
+                            break;
+                        default:
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.rotateX(angle * Math.PI / 180);
+                            break;
+                    }
+                    renderScene(scene, camera);
+                });
+
+                $('#translate-button').click(function () {
+                    var length = parseFloat($('#length-input').val());
+                    console.log(length);
+
+                    switch (selectedAxis) {
+                        case 'X':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.translateX(length);
+                            break;
+                        case 'Y':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.translateY(length);
+                            break;
+                        case 'Z':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.translateZ(length);
+                            break;
+                        default:
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.translateX(length);
+                            break;
+                    }
+                    renderScene(scene, camera);
+                });
+
+                $('#scale-button').click(function () {
+                    var scale = parseFloat($('#scale-input').val());
+                    console.log(scale);
+
+                    switch (selectedAxis) {
+                        case 'X':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(scale, 1, 1);
+                            break;
+                        case 'Y':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(1, scale, 1);
+                            break;
+                        case 'Z':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(1, 1, scale);
+                            break;
+                        default:
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(scale, 1, 1);
+                            break;
+                    }
+                    renderScene(scene, camera);
+                });
+
+                $('#project-button').click(function () {
+                    switch (selectedAxis) {
+                        case 'X':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(0, 1, 1);
+                            break;
+                        case 'Y':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(1, 0, 1);
+                            break;
+                        case 'Z':
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(1, 1, 0);
+                            break;
+                        default:
+                            console.log('current axis: ' + selectedAxis);
+                            textMesh.scale.set(0, 1, 1);
+                            break;
+                    }
+                    renderScene(scene, camera);
+                });
+            </script>
+        </div>
+    </body>
+</html>
+
